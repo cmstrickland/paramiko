@@ -204,18 +204,13 @@ class AuthHandler (object):
         if self.transport.auth_timeout is not None:
             max_ts = time.time() + self.transport.auth_timeout
         while True:
-            event.wait(0.1)
+            if event.wait(0.1):
+                break
             if not self.transport.is_active():
                 e = self.transport.get_exception()
-                if e is None and self.is_authenticated():
-                    # no error, but the transport became deactivated
-                    # e.g. a disconnect happened while we entered the loop
-                    break
                 if (e is None) or issubclass(e.__class__, EOFError):
                     e = AuthenticationException('Authentication failed.')
                 raise e
-            if event.is_set():
-                break
             if max_ts is not None and max_ts <= time.time():
                 raise AuthenticationException('Authentication timeout.')
 
