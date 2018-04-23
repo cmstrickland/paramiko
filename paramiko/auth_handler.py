@@ -207,10 +207,7 @@ class AuthHandler (object):
             if event.wait(0.1):
                 break
             if not self.transport.is_active():
-                e = self.transport.get_exception()
-                if (e is None) or issubclass(e.__class__, EOFError):
-                    e = AuthenticationException('Authentication failed.')
-                raise e
+                break
             if max_ts is not None and max_ts <= time.time():
                 raise AuthenticationException('Authentication timeout.')
 
